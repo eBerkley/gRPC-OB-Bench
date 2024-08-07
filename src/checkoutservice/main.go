@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 	"time"
 
 	"cloud.google.com/go/profiler"
@@ -27,6 +28,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
 
 	pb "github.com/GoogleCloudPlatform/microservices-demo/src/checkoutservice/genproto"
@@ -38,6 +41,9 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+
+	dmresolver "github.com/cperez08/dm-resolver/pkg/resolver"
+	"google.golang.org/grpc/resolver"
 )
 
 const (
@@ -46,6 +52,11 @@ const (
 )
 
 var log *logrus.Logger
+
+// how often do we refresh gRPC endpoints?
+//
+// Interval is measured in seconds, dmresolver makes conversion internally...
+var refreshRate = time.Duration(15)
 
 func init() {
 	log = logrus.New()
@@ -132,6 +143,10 @@ func main() {
 		propagation.NewCompositeTextMapPropagator(
 			propagation.TraceContext{}, propagation.Baggage{}))
 	srv = grpc.NewServer(
+		grpc.KeepaliveParams(keepalive.ServerParameters{
+			MaxConnectionAge:      time.Second * 30,
+			MaxConnectionAgeGrace: time.Second * 10,
+		}),
 		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
 		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
 	)
@@ -205,12 +220,22 @@ func mustMapEnv(target *string, envKey string) {
 
 func mustConnGRPC(ctx context.Context, conn **grpc.ClientConn, addr string) {
 	var err error
-	ctx, cancel := context.WithTimeout(ctx, time.Second*3)
-	defer cancel()
-	*conn, err = grpc.DialContext(ctx, addr,
-		grpc.WithInsecure(),
-		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
-		grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor()))
+	splt := strings.Split(addr, ":")
+	if len(splt) != 2 {
+		panic(fmt.Sprintf("mustConnGRPC: addr %v does not follow host:port format.", addr))
+	}
+	svc_host := splt[0]
+	svc_port := splt[1]
+
+	resolver.Register(dmresolver.NewDomainResolverBuilder(svc_host, svc_host, svc_port, true, &refreshRate))
+
+	full_addr := fmt.Sprintf("%s:///%s", svc_host, addr)
+	*conn, err = grpc.NewClient(full_addr,
+		grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`), // This makes the client use round robin LB.
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler()), // Should be equivalent to UnaryInterceptor + StreamInterceptor
+	)
+
 	if err != nil {
 		panic(errors.Wrapf(err, "grpc: failed to connect %s", addr))
 	}

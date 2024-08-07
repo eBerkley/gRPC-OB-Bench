@@ -135,7 +135,7 @@ func run(port string) string {
 		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()))
 
 	svc := &productCatalog{}
-	err = loadCatalog(&svc.catalog)
+	_, err = svc.refreshCatalogFile()
 	if err != nil {
 		log.Warnf("could not parse product catalog")
 	}

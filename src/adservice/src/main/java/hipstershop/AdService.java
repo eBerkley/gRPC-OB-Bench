@@ -183,12 +183,12 @@ public final class AdService {
             .setText("Loafers for sale. Buy one, get second one for free")
             .build();
     return ImmutableListMultimap.<String, Ad>builder()
+        .putAll("hair", hairdryer)
         .putAll("clothing", tankTop)
+        .putAll("decor", candleHolder)
+        .putAll("kitchen", bambooGlassJar) // Removed mug.
         .putAll("accessories", watch)
         .putAll("footwear", loafers)
-        .putAll("hair", hairdryer)
-        .putAll("decor", candleHolder)
-        .putAll("kitchen", bambooGlassJar, mug)
         .build();
   }
 

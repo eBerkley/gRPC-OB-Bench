@@ -26,7 +26,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -gcflags="${SKAFFOLD_GO_GCFLAGS}" -o /go/b
 
 FROM scratch
 WORKDIR /src
-COPY --from=builder /go/bin/frontend /src/server
+COPY --from=builder /go/bin/frontend /src/frontend
 COPY ./templates ./templates
 COPY ./static ./static
 
@@ -36,4 +36,4 @@ COPY ./static ./static
 ENV GOTRACEBACK=single
 
 EXPOSE 8080
-ENTRYPOINT ["/src/server"]
+ENTRYPOINT ["/src/frontend"]

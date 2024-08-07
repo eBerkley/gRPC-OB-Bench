@@ -27,7 +27,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -gcflags="${SKAFFOLD_GO_GCFLAGS}" -o /prod
 FROM scratch
 
 WORKDIR /src
-COPY --from=builder /productcatalogservice ./server
+COPY --from=builder /productcatalogservice ./catalog
 COPY products.json .
 
 # Definition of this variable is used by 'skaffold debug' to identify a golang binary.
@@ -36,4 +36,4 @@ COPY products.json .
 ENV GOTRACEBACK=single
 
 EXPOSE 3550
-ENTRYPOINT ["/src/server"]
+ENTRYPOINT ["/src/catalog"]

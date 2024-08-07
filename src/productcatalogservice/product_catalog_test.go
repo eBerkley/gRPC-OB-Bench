@@ -35,34 +35,37 @@ func TestMain(m *testing.M) {
 		},
 	}
 
-	mockProductCatalog.catalog.Products = append(mockProductCatalog.catalog.Products, &pb.Product{
-		Id:   "abc001",
-		Name: "Product Alpha One",
-	})
-	mockProductCatalog.catalog.Products = append(mockProductCatalog.catalog.Products, &pb.Product{
-		Id:   "abc002",
-		Name: "Product Delta",
-	})
-	mockProductCatalog.catalog.Products = append(mockProductCatalog.catalog.Products, &pb.Product{
-		Id:   "abc003",
-		Name: "Product Alpha Two",
-	})
-	mockProductCatalog.catalog.Products = append(mockProductCatalog.catalog.Products, &pb.Product{
-		Id:   "abc004",
-		Name: "Product Gamma",
-	})
+	mockProductCatalog.refreshCatalogFile()
+
+	// mockProductCatalog.catalog.Products = append(mockProductCatalog.catalog.Products, &pb.Product{
+	// 	Id:   "abc001",
+	// 	Name: "Product Alpha One",
+	// })
+	// mockProductCatalog.catalog.Products = append(mockProductCatalog.catalog.Products, &pb.Product{
+	// 	Id:   "abc002",
+	// 	Name: "Product Delta",
+	// })
+	// mockProductCatalog.catalog.Products = append(mockProductCatalog.catalog.Products, &pb.Product{
+	// 	Id:   "abc003",
+	// 	Name: "Product Alpha Two",
+	// })
+	// mockProductCatalog.catalog.Products = append(mockProductCatalog.catalog.Products, &pb.Product{
+	// 	Id:   "abc004",
+	// 	Name: "Product Gamma",
+	// })
 
 	os.Exit(m.Run())
 }
 
 func TestGetProductExists(t *testing.T) {
 	product, err := mockProductCatalog.GetProduct(context.Background(),
-		&pb.GetProductRequest{Id: "abc003"},
+		// &pb.GetProductRequest{Id: "abc003"},
+		&pb.GetProductRequest{Id: "OLJCESPC7Z"},
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got, want := product.Name, "Product Alpha Two"; got != want {
+	if got, want := product.Name, "Sunglasses"; got != want {
 		t.Errorf("got %s, want %s", got, want)
 	}
 }
@@ -77,9 +80,13 @@ func TestGetProductNotFound(t *testing.T) {
 }
 
 func TestListProducts(t *testing.T) {
+	t.Error(mockProductCatalog.ListProducts(context.Background(), &pb.Empty{}))
+
 	products, err := mockProductCatalog.ListProducts(context.Background(),
 		&pb.Empty{},
 	)
+	t.Error(products.Products)
+	// t.Error(products.Products[0].PriceUsd.Nanos)
 	if err != nil {
 		t.Fatal(err)
 	}

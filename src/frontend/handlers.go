@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"math/rand"
+	"math"
 	"net"
 	"net/http"
 	"os"
@@ -530,7 +530,7 @@ func (fe *frontendServer) chooseAd(ctx context.Context, ctxKeys []string, log lo
 		log.WithField("error", err).Warn("failed to retrieve ads")
 		return nil
 	}
-	return ads[rand.Intn(len(ads))]
+	return ads[0]
 }
 
 func renderHTTPError(log logrus.FieldLogger, r *http.Request, w http.ResponseWriter, err error, code int) {
@@ -604,7 +604,7 @@ func cartSize(c []*pb.CartItem) int {
 
 func renderMoney(money pb.Money) string {
 	currencyLogo := renderCurrencyLogo(money.GetCurrencyCode())
-	return fmt.Sprintf("%s%d.%02d", currencyLogo, money.GetUnits(), money.GetNanos()/10000000)
+	return fmt.Sprintf("%s%d.%02.f", currencyLogo, money.GetUnits(), math.Round(float64(money.Nanos)/10000000.0))
 }
 
 func renderCurrencyLogo(currencyCode string) string {

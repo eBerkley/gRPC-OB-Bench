@@ -16,6 +16,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"os"
 	"strings"
 	"time"
 
@@ -74,12 +76,37 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 }
 
 func (p *productCatalog) parseCatalog() []*pb.Product {
+	products := p.catalog.Products
 	if reloadCatalog || len(p.catalog.Products) == 0 {
-		err := loadCatalog(&p.catalog)
-		if err != nil {
+		var err error
+		if products, err = p.refreshCatalogFile(); err != nil {
 			return []*pb.Product{}
 		}
+
+		// err := loadCatalog(&p.catalog)
+		// if err != nil {
+		// 	return []*pb.Product{}
+		// }
 	}
 
-	return p.catalog.Products
+	return products
+}
+
+func (p *productCatalog) refreshCatalogFile() ([]*pb.Product, error) {
+	var products []*pb.Product
+	catalogJSON, err := os.ReadFile("products.json")
+	if err != nil {
+		log.Fatalf("failed to open product catalog json file: %v", err)
+		return nil, err
+	}
+
+	if err := json.Unmarshal(catalogJSON, &products); err != nil {
+		log.Warnf("failed to parse the catalog JSON: %v", err)
+		return nil, err
+	}
+	catalogMutex.Lock()
+	defer catalogMutex.Unlock()
+	p.catalog.Products = products
+	return products, nil
+
 }

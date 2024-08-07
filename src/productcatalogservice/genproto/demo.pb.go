@@ -380,7 +380,7 @@ type Product struct {
 	Name        string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Picture     string `protobuf:"bytes,4,opt,name=picture,proto3" json:"picture,omitempty"`
-	PriceUsd    *Money `protobuf:"bytes,5,opt,name=price_usd,json=priceUsd,proto3" json:"price_usd,omitempty"`
+	PriceUsd    *Money `protobuf:"bytes,5,opt,name=price_usd,json=priceUsd,proto3" json:"priceUsd,omitempty"`
 	// Categories such as "clothing" or "kitchen" that can be used to look up
 	// other related products.
 	Categories           []string `protobuf:"bytes,6,rep,name=categories,proto3" json:"categories,omitempty"`
@@ -858,7 +858,7 @@ func (m *Address) GetZipCode() int32 {
 // Represents an amount of money with its currency type.
 type Money struct {
 	// The 3-letter currency code defined in ISO 4217.
-	CurrencyCode string `protobuf:"bytes,1,opt,name=currency_code,json=currencyCode,proto3" json:"currency_code,omitempty"`
+	CurrencyCode string `protobuf:"bytes,1,opt,name=currency_code,json=currencyCode,proto3" json:"currencyCode,omitempty"`
 	// The whole units of the amount.
 	// For example if `currencyCode` is `"USD"`, then 1 unit is one US dollar.
 	Units int64 `protobuf:"varint,2,opt,name=units,proto3" json:"units,omitempty"`
