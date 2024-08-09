@@ -29,7 +29,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: true
-        image: docker.io/eberkley/microservices-ads:5b96acb9
+        image: <DOCKER>/microservices-ads:<VERSION>
         ports:
         - containerPort: 9555
         env:

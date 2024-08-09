@@ -29,7 +29,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: true
-        image: docker.io/eberkley/microservices-recommendation:VERSION
+        image: <DOCKER>/microservices-recommendationservice:<VERSION>
         ports:
         - containerPort: 8080
         readinessProbe:

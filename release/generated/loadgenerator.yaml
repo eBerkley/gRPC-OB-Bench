@@ -17,7 +17,6 @@ spec:
   type: ClusterIP
 ---
 
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -88,7 +87,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: false
-        image: docker.io/eberkley/loadgen:5e1a4264
+        image: docker.io/eberkley/loadgen:VERSION
         imagePullPolicy: IfNotPresent
         # image: gcr.io/google-samples/microservices-demo/loadgenerator:v0.10.0
         env:
@@ -183,7 +182,7 @@ spec:
           readOnlyRootFilesystem: true
 
 
-        image: docker.io/eberkley/loadgen:5e1a4264
+        image: docker.io/eberkley/loadgen:VERSION
         imagePullPolicy: IfNotPresent
         env:
         - name: LOCUST_MODE

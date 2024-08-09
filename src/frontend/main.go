@@ -61,7 +61,7 @@ var (
 	// how often do we refresh gRPC endpoints?
 	//
 	// Interval is measured in seconds, dmresolver makes conversion internally...
-	refreshRate = time.Duration(15)
+	refreshRate = time.Duration(60)
 )
 
 type ctxKeySessionID struct{}

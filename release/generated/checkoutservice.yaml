@@ -28,7 +28,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: gcr.io/google-samples/microservices-demo/checkoutservice:v0.10.0
+          image: docker.io/eberkley/checkoutservice:VERSION
           ports:
           - containerPort: 5050
           readinessProbe:

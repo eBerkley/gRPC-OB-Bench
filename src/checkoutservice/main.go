@@ -29,7 +29,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
 
 	pb "github.com/GoogleCloudPlatform/microservices-demo/src/checkoutservice/genproto"
@@ -56,7 +55,7 @@ var log *logrus.Logger
 // how often do we refresh gRPC endpoints?
 //
 // Interval is measured in seconds, dmresolver makes conversion internally...
-var refreshRate = time.Duration(15)
+var refreshRate = time.Duration(60)
 
 func init() {
 	log = logrus.New()
@@ -143,10 +142,6 @@ func main() {
 		propagation.NewCompositeTextMapPropagator(
 			propagation.TraceContext{}, propagation.Baggage{}))
 	srv = grpc.NewServer(
-		grpc.KeepaliveParams(keepalive.ServerParameters{
-			MaxConnectionAge:      time.Second * 30,
-			MaxConnectionAgeGrace: time.Second * 10,
-		}),
 		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
 		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
 	)

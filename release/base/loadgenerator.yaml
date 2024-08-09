@@ -87,9 +87,8 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: false
-        image: docker.io/eberkley/loadgen:VERSION
+        image: <DOCKER>/microservices-loadgenerator:<VERSION>
         imagePullPolicy: IfNotPresent
-        # image: gcr.io/google-samples/microservices-demo/loadgenerator:v0.10.0
         env:
         - name: LOCUST_MODE
           value: MASTER
@@ -182,7 +181,7 @@ spec:
           readOnlyRootFilesystem: true
 
 
-        image: docker.io/eberkley/loadgen:VERSION
+        image: <DOCKER>/microservices-loadgenerator:<VERSION>
         imagePullPolicy: IfNotPresent
         env:
         - name: LOCUST_MODE

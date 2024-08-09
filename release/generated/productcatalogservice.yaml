@@ -29,8 +29,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: true
-        # image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.10.0
-        image: docker.io/eberkley/microservices-products:e1c5ded8
+        image: docker.io/eberkley/microservices-products:VERSION
         ports:
         - containerPort: 3550
         env:

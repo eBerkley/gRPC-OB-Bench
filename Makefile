@@ -1,6 +1,6 @@
 .EXPORT_ALL_VARIABLES:
 
-DOCKER := docker.io/eberkley
+DOCKER ?= docker.io/eberkley
 
 TOP := .
 
@@ -42,7 +42,7 @@ minikube_restart:
 	./scripts/minikube_start.sh
 
 deploy: $(GEN_YAMLS)
-	./scripts/start.sh
+	# ./scripts/start.sh
 
 bench: deploy
 	./scripts/pull_stats.sh
