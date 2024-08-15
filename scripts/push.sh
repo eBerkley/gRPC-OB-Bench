@@ -13,8 +13,3 @@ if grep -q "<VERSION>" "$_genname"; then
   sed -i "s#<DOCKER>#$DOCKER#g" $_genname
   sed -i "s/<VERSION>/$version/g" $_genname
 fi
-
-
-# echo $_dirname
-# echo $_genname
-

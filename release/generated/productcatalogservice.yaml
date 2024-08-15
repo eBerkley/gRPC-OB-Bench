@@ -29,7 +29,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: true
-        image: docker.io/eberkley/microservices-products:VERSION
+        image: docker.io/eberkley/microservices-productcatalogservice:11b017cb
         ports:
         - containerPort: 3550
         env:
@@ -45,11 +45,11 @@ spec:
             port: 3550
         resources:
           requests:
-            memory: "1024Mi"
             cpu: "1"
+            memory: "2048Mi"
           limits:
             cpu: "1"
-            memory: 1024Mi
+            memory: "2048Mi"
 ---
 apiVersion: v1
 kind: Service

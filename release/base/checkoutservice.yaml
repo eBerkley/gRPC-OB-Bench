@@ -54,11 +54,11 @@ spec:
             value: "cartservice:7070"
           resources:
             requests:
-              memory: "1024Mi"
               cpu: "1"
+              memory: "2048Mi"
             limits:
               cpu: "1"
-              memory: 1024Mi
+              memory: "2048Mi"
 ---
 apiVersion: v1
 kind: Service

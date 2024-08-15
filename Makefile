@@ -18,10 +18,10 @@ BASE_YAMLS := $(wildcard $(BASE)/*.yaml)
 BASE_YAMLS_FNAMES := $(foreach var, $(BASE_YAMLS), $(shell basename $(var) .yaml))
 GEN_YAMLS := $(foreach var, $(BASE_YAMLS_FNAMES), $(GENERATED)/$(var).yaml)
 
-.PHONY: all
+.PHONY: all minikube_start minikube_restart bench deploy stop 
 
 all: 
-	@echo valid args:
+	@echo valid arguments:
 	@echo
 	@echo	"minikube_[re]start   - [re]start minikube"
 	@echo "deploy               - Starts minikube / builds new version of app if necessary, then deploys."
@@ -41,8 +41,15 @@ minikube_restart:
 	minikube delete
 	./scripts/minikube_start.sh
 
-deploy: $(GEN_YAMLS)
-	# ./scripts/start.sh
+deploy: minikube_start $(GEN_YAMLS)
+	@# ./scripts/start.sh
+	kubectl apply -f $(GENERATED)/loadgenerator.yaml
+	sleep 30
+	for yaml in $(filter-out $(GENERATED)/loadgenerator.yaml, $(GEN_YAMLS)); do\
+		kubectl apply -f $$yaml;\	
+	done
+	./scripts/make_scale.sh
+	
 
 bench: deploy
 	./scripts/pull_stats.sh

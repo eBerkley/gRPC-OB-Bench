@@ -31,7 +31,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: docker.io/microservices-frontend:VERSION
+          image: docker.io/eberkley/microservices-frontend:5d66f774
           ports:
           - containerPort: 8080
           readinessProbe:
@@ -73,11 +73,11 @@ spec:
             value: "0"
           resources:
             requests:
-              memory: "1024Mi"
               cpu: "1"
+              memory: "2048Mi"
             limits:
-              memory: 1024Mi
               cpu: "1"
+              memory: "2048Mi"
 ---
 apiVersion: v1
 kind: Service

@@ -15,7 +15,7 @@ if len(argv) < 1:
     exit(1)
 
 CSV_SW=argv[1]
-OTHER_NAME="none"
+OTHER_NAME="microservices"
 
 DIRNAME = os.path.dirname(__file__)
 

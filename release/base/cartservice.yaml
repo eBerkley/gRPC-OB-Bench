@@ -37,18 +37,12 @@ spec:
           value: "redis-cart:6379"
         resources:
           requests:
-            memory: "1024Mi"
             cpu: "1"
+            memory: "2048Mi"
           limits:
             cpu: "1"
-            memory: 1024Mi
-          # requests:
-          #   cpu: 400m
-          #   memory: 256Mi
-          # limits:
-          #   cpu: 3200m
-          #   memory: 1024Mi
-        readinessProbe:
+            memory: "2048Mi"
+          readinessProbe:
           initialDelaySeconds: 15
           grpc:
             port: 7070

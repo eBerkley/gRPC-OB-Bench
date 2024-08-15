@@ -29,7 +29,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: true
-        image: docker.io/eberkley/microservices-recommendation:baef24fd
+        image: docker.io/eberkley/microservices-recommendationservice:7248171b
         ports:
         - containerPort: 8080
         readinessProbe:
@@ -49,11 +49,11 @@ spec:
           value: "1"
         resources:
           requests:
-            memory: "1024Mi"
             cpu: "1"
+            memory: "2048Mi"
           limits:
             cpu: "1"
-            memory: 1024Mi
+            memory: "2048Mi"
 ---
 apiVersion: v1
 kind: Service

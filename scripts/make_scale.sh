@@ -1,6 +1,6 @@
 #!/bin/bash
 
-hpa_flags=' --min=1 --max=6 --cpu-percent=80'
+hpa_flags=' --min=1 --max=20 --cpu-percent=65'
 
 kubectl autoscale deployment adservice $hpa_flags
 kubectl autoscale deployment cartservice $hpa_flags

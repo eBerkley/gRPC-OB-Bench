@@ -73,6 +73,14 @@ spec:
         env:
         - name: FRONTEND_ADDR
           value: "frontend-external:80"
+        
+        resources:
+          requests:
+            cpu: 1
+            memory: 512Mi
+          limits:
+            cpu: 1
+            memory: 512Mi
 
       containers:
       - name: loadgenerator
@@ -97,9 +105,12 @@ spec:
           value: "frontend-external:80"
 
         resources:
+          requests:
+            cpu: 1
+            memory: 512Mi
           limits:
-            memory: "512Mi"
-            cpu: "300m"
+            cpu: 1
+            memory: 512Mi
 
         ports:
         - containerPort: 5557
@@ -122,7 +133,7 @@ metadata:
     role: loadgenerator-worker
   name: loadgenerator-worker
 spec:
-  replicas: 4
+  replicas: 18
   selector:
     matchLabels:
       app: loadgenerator-worker
@@ -158,6 +169,13 @@ spec:
           echo "Failed to reach frontend after $MAX_RETRIES attempts."
           exit 1
         name: frontend-check
+        resources:
+          requests:
+            cpu: "1"
+            memory: "1024Mi"
+          limits:
+            cpu: "1"
+            memory: "1024Mi"
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -194,12 +212,9 @@ spec:
           value: "frontend:80"
 
         resources:
-          # requests: 
-          #   memory: "128Mi"
-          #   cpu: "250m"
           requests:
-            memory: "512Mi"
             cpu: "1"
+            memory: "1024Mi"
           limits:
-            memory: "512Mi"
             cpu: "1"
+            memory: "1024Mi"

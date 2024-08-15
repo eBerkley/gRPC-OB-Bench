@@ -15,7 +15,7 @@
 # limitations under the License.
 
 import random
-from locust import FastHttpUser, TaskSet, User, between, events, LoadTestShape, task, tag, constant_pacing
+from locust import FastHttpUser, between, LoadTestShape, task, tag
 from typing import Tuple, Optional
 from faker import Faker
 import logging
@@ -23,9 +23,6 @@ import datetime
 
 import locust.stats
 locust.stats.CSV_STATS_INTERVAL_SEC = 10
-
-from locust.runners import MasterRunner, LocalRunner
-from locust.env import Environment
 
 fake = Faker()
 
@@ -40,15 +37,16 @@ products = [
     'LS4PSXUNUM',
     'OLJCESPC7Z']
 
-
 class WebsiteUser(FastHttpUser):
+    def __init__(self, environment):
+        super().__init__(environment)
 
     def on_start(self):
         self.index()
 
+    @tag('refresh')
     @task(3)
     def reset_index(self):
-        
         self.client.get("/", headers={"Connection": "close"})
 
     # 1 req
@@ -111,52 +109,6 @@ class WebsiteUser(FastHttpUser):
 
     wait_time = between(1, 5)
 
-# class SingleLoad(LoadTestShape):
-#     """
-#     A load shape that only steps up to a single value, specified by --max-users
-
-#     Keyword arguments:
-
-#         wait_time   -- time to wait after user goal is met
-
-#         spawn_rate  -- users spawned per second while still spawning
-    
-#     """
-
-#     abstract=True
-
-#     wait_time: int = 15 * 60 
-#     spawn_rate: int = 5
-#     users: int = 0
-
-#     def __init__(self, *args, **kwargs):
-#         self._target_timestamp: float = 0
-
-#         # if self.runner == None or self.runner.environment.parsed_options == None:
-#         #     logging.fatal("UH OH! self.runner==None or self.runner.env.parsed_options == None!!")
-#         #     exit(4)
-        
-#         # self.users = self.runner.environment.parsed_options.max_users
-
-#         # self.runner.environment.reset_stats = True
-#         self.users = get_max_users()
-#         super().__init__(*args, **kwargs)
-
-#     def tick(self):
-#         cur_users = self.get_current_user_count()
-#         cur_time = self.get_run_time()
-
-#         if cur_users == self.users:
-#             if self._target_timestamp == 0:
-#                 self._target_timestamp = cur_time
-
-#             elif cur_time - self._target_timestamp >= self.wait_time:
-#                 #all done running
-#                 return None
-
-#         return self.users, self.spawn_rate
-
-
 class MultiLoad(LoadTestShape):
     """
     A step load shape
@@ -173,20 +125,17 @@ class MultiLoad(LoadTestShape):
     """
     
     # Time between steps
-    step_time = 8 * 60 # 8 minutes
+    step_time = 12 * 60 # 12 minutes
     
     # Users at each step
-    # step_load = [1000, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000]
-    step_load = [1000, 2500, 5000, 7500, 10000, 12500, 15000, 17500]
+    step_load = [1000, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 25000, 30000]
 
     # Users to stop/start per second while amount is changing.
-    spawn_rate = 4
-
-    abstract=True
+    spawn_rate = 5
 
     # When to terminate
     num_steps = len(step_load)
-
+ 
     def __init__(self, *args, **kwargs):
         self._step = 0
         self._target_timestamp = 0
@@ -201,27 +150,22 @@ class MultiLoad(LoadTestShape):
         
         # if we are done spawning
         if cur_users == target_users:
-            
 
             # if we *just* reached target
             if self._target_timestamp == 0:
                 # start timer
-                self._target_timestamp = cur_time
+                self._target_timestamp = cur_time 
             else:
                 elapsed = cur_time - self._target_timestamp
                 # out_str += f"\t time remaining: {self.step_time[self._step] - elapsed:.2f}"
                 out_str += f"\t time remaining: {self.step_time - elapsed:.2f}"
                 # logging.info(f"elapsed: {elapsed}\n")
+
                 # if time has gone on long enough
-                # if elapsed >= self.step_time[self._step]:
-
                 if elapsed >= self.step_time:
-                    # self._check_tail()
-
                     self._target_timestamp = 0
                     self._step += 1
 
-                    # if we have just completed the last step
                     if self._step == self.num_steps:
                         return None
 
