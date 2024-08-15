@@ -46,7 +46,7 @@ deploy: minikube_start $(GEN_YAMLS)
 	kubectl apply -f $(GENERATED)/loadgenerator.yaml
 	sleep 30
 	for yaml in $(filter-out $(GENERATED)/loadgenerator.yaml, $(GEN_YAMLS)); do\
-		kubectl apply -f $$yaml;\	
+		kubectl apply -f $$yaml;\
 	done
 	./scripts/make_scale.sh
 	

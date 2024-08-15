@@ -9,7 +9,9 @@ version=$(uuidgen | sed "s/$capture_group$others/\1/")
 
 # Check if we want to build a new image.
 if grep -q "<VERSION>" "$_genname"; then
+  echo building $DOCKER/microservices-$_dirname:$version
   docker build $SRC/$_dirname -t $DOCKER/microservices-$_dirname:$version
+  docker push $DOCKER/microservices-$_dirname:$version
   sed -i "s#<DOCKER>#$DOCKER#g" $_genname
   sed -i "s/<VERSION>/$version/g" $_genname
 fi
